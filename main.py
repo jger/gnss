@@ -2,6 +2,15 @@
 import serial
 import pynmea2
 import time
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("-r", "--raw", help="raw output", action="store_true")
+args = parser.parse_args()
+if args.raw:
+    print "raw turned on"
+    raw=1 
+else:
+    raw=0
 
 ser1 = serial.Serial( 
 #   port='/dev/ttyAMA0',
@@ -31,9 +40,19 @@ def parseGPS(str,ser):
        print '<',ser,'> ', 
        print "Timestamp: %s -- Lat: %s  -- Lon: %s  -- Altitude: %s %s" % (msg.timestamp,"{:<15}".format(msg.latitude),"{:<15}".format(msg.longitude),msg.altitude,msg.altitude_units)
 
+def rawGPS(str,ser):
+       print '<',ser,'> ',str,
+
+
 while 1:
     x=ser1.readline()
-    parseGPS(x,'1')
-
+    if raw==0: 
+	parseGPS(x,'1')
+    else: 
+	rawGPS(x,'1')
+	
     y=ser2.readline()
-    parseGPS(y,'2')
+    if raw==0: 
+    	parseGPS(y,'2')
+    else:
+    	rawGPS(y,'2')
